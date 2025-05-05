@@ -25,15 +25,12 @@ class sinoptik():
         geolocator = Nominatim(user_agent="geo_lookup")
         location = geolocator.geocode(self.city, language="en")
         country = location.address.split(",")[-1].strip()
-        #print(country)
         if country == "United States":country = "usa"
         elif country == "United Kingdom":country="uk"
 
 
         #Адреса сторінки з погодою
-        url = f"https://www.timeanddate.com/weather/{country}/{self.city}"      #?query={city} -повертає список всіх міст, або частин областей
-                                                                                #тому було вирішено зробити таким способом
-
+        url = f"https://www.timeanddate.com/weather/{country}/{self.city}"      
         #Заголовки
         headers = {"User-Agent": "Mozilla/5.0"}
 
@@ -47,13 +44,10 @@ class sinoptik():
         soup = BeautifulSoup(response.text, "html.parser")
 
         temp_tag = soup.find("div", class_="h2")
-    
-        #humidity_tag = soup.find("tr", string="Humidity:").find_next("td") -   По невідомій мені причині не знаходить потрібний тег
-        #                                                                       хоча він є
         
         temp = soup.find_all('tr')
         for i in temp:
-            if "Humidity: " in str(i): humidity_tag = i.find_next("td")        #Костиль
+            if "Humidity: " in str(i): humidity_tag = i.find_next("td")
             if "Temperature<" in str(i): self.data[0] = i.find_all("td")
             if "Humidity<" in str(i): self.data[1] = i.find_all("td")
 
